@@ -1,53 +1,28 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Clinic Radio Map — Cleveland eHealth (Best)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Clinic Radio Map — Separated Dots</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-  :root{
-    --brand:#0b6ef6;
-    --panel-bg:rgba(255,255,255,0.95);
-    --muted:#666;
-  }
-  html,body,#map { height:100%; margin:0; padding:0; font-family:system-ui, Arial, sans-serif; background:#f6f8fb; }
-  .top-bar { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border-bottom:1px solid #eee;gap:12px; }
-  .brand { display:flex;align-items:center;gap:10px; }
-  .logo { width:34px; height:34px; background:linear-gradient(135deg,#0b6ef6,#00c2ff); border-radius:6px; display:flex;align-items:center;justify-content:center;color:white;font-weight:700; }
-  .title { font-weight:700; color:#123; font-size:15px; }
-  .controls { display:flex; gap:8px; align-items:center; }
-  .btn { background:var(--brand); color:#fff; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; font-size:13px; }
-  .search { padding:8px 10px; border-radius:8px; border:1px solid #e1e4e8; font-size:14px; min-width:180px; }
-  #map { height:calc(100% - 62px); } /* top-bar height */
-  .legend { position:absolute; right:14px; top:78px; z-index:1000; background:var(--panel-bg); padding:8px 10px; border-radius:8px; box-shadow:0 6px 20px rgba(16,24,40,0.08); font-size:13px; }
-  .legend .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:middle; }
-  .info-note { position:absolute; left:14px; bottom:14px; z-index:1000; background:var(--panel-bg); padding:8px 12px; border-radius:8px; box-shadow:0 6px 20px rgba(16,24,40,0.08); font-size:13px; max-width:320px; }
-  .cta-small { font-size:12px; color:var(--muted); }
-  /* larger tappable markers for mobile */
-  .pulse-green { width:26px;height:26px;background:rgba(0,180,0,1);border-radius:50%;border:3px solid white;position:relative;box-shadow:0 4px 14px rgba(0,0,0,0.12); }
-  .pulse-red { width:22px;height:22px;background:rgba(220,30,30,1);border-radius:50%;border:3px solid white;position:relative;box-shadow:0 3px 12px rgba(0,0,0,0.12); }
+  html,body,#map { height:100%; margin:0; padding:0; font-family:system-ui,Arial,sans-serif }
+  .top-bar { padding:10px 14px; background:#fff; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .title { font-weight:700; color:#16325c; }
+  #map { height:calc(100vh - 56px); }
+  .pulse-green { width:18px;height:18px;background:rgba(0,180,0,1);border-radius:50%;border:2px solid white;position:relative; }
+  .pulse-red { width:12px;height:12px;background:rgba(220,30,30,1);border-radius:50%;border:2px solid white;position:relative; }
   .pulse-green::after, .pulse-red::after { content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;border-radius:50%;animation:pulse 1.8s infinite; }
-  .pulse-green::after { background: rgba(0,180,0,0.30); }
-  .pulse-red::after { background: rgba(220,30,30,0.30); }
-  @keyframes pulse { 0% { transform:translate(-50%,-50%) scale(0.8); opacity:0.9; } 70% { transform:translate(-50%,-50%) scale(2.4); opacity:0; } 100% { opacity:0; } }
-  /* responsive */
-  @media (max-width:600px){ .search{min-width:120px} .pulse-green{width:32px;height:32px;border-width:4px} .pulse-red{width:28px;height:28px;border-width:4px} }
+  .pulse-green::after { background: rgba(0,180,0,0.35); }
+  .pulse-red::after { background: rgba(220,30,30,0.25); }
+  @keyframes pulse { 0% { transform:translate(-50%,-50%) scale(0.8); opacity:0.9; } 70% { transform:translate(-50%,-50%) scale(2.2); opacity:0; } 100% { opacity:0; } }
 </style>
 </head>
 <body>
 <div class="top-bar">
-  <div class="brand"><div class="logo">Ce</div><div><div class="title">Cleveland eHealth</div><div class="cta-small">Clinic Radio Map — India</div></div></div>
-  <div class="controls">
-    <input id="search" class="search" placeholder="Search clinic, city or ID (e.g. CL001)" aria-label="Search" />
-    <button id="zoomAll" class="btn">Zoom to all</button>
-    <button id="activeOnly" class="btn">Show Active</button>
-  </div>
+  <div class="title">Live Clinic Radio Map — Radio 4 Public Health 75 Clinics ( Green - Active : Red - Non Active )</div>
 </div>
 <div id="map"></div>
-<div class="legend"><span class="dot" style="background:#00b400"></span> Active&nbsp;&nbsp;<span class="dot" style="background:#d31e1e"></span> Inactive</div>
-<div class="info-note">Tap once on page (mobile) or click anywhere (desktop) to enable audio. Active clinics stream Cleveland Radio.</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -55,839 +30,623 @@ const clinics = [
   {
     "id": "CL001",
     "clinic": "Clinic 1",
-    "doctor": "",
-    "city": "Kolkata",
-    "state": "West Bengal",
-    "lat": 22.360493,
-    "lon": 88.136795,
+    "city": "Mumbai",
+    "lat": 19.076,
+    "lon": 72.8777,
     "status": "Active"
   },
   {
     "id": "CL002",
     "clinic": "Clinic 2",
-    "doctor": "",
-    "city": "Jaipur",
-    "state": "Rajasthan",
-    "lat": 27.143645,
-    "lon": 76.056668,
+    "city": "Pune",
+    "lat": 18.5204,
+    "lon": 73.8567,
     "status": "Active"
   },
   {
     "id": "CL003",
     "clinic": "Clinic 3",
-    "doctor": "",
     "city": "Ahmedabad",
-    "state": "Gujarat",
-    "lat": 23.269864,
-    "lon": 72.59464,
+    "lat": 23.0225,
+    "lon": 72.5714,
     "status": "Active"
   },
   {
     "id": "CL004",
     "clinic": "Clinic 4",
-    "doctor": "",
-    "city": "Pune",
-    "state": "Maharashtra",
-    "lat": 18.196729,
-    "lon": 73.776961,
+    "city": "Surat",
+    "lat": 21.1702,
+    "lon": 72.8311,
     "status": "Active"
   },
   {
     "id": "CL005",
     "clinic": "Clinic 5",
-    "doctor": "",
-    "city": "Coimbatore",
-    "state": "Tamil Nadu",
-    "lat": 11.210098,
-    "lon": 77.214384,
+    "city": "Vadodara",
+    "lat": 22.3072,
+    "lon": 73.1812,
     "status": "Active"
   },
   {
     "id": "CL006",
     "clinic": "Clinic 6",
-    "doctor": "",
-    "city": "Bhopal",
-    "state": "Madhya Pradesh",
-    "lat": 23.275413,
-    "lon": 77.319145,
+    "city": "Goa",
+    "lat": 15.2993,
+    "lon": 74.124,
     "status": "Active"
   },
   {
     "id": "CL007",
     "clinic": "Clinic 7",
-    "doctor": "",
-    "city": "Vadodara",
-    "state": "Gujarat",
-    "lat": 21.993131,
-    "lon": 73.26513,
+    "city": "Nashik",
+    "lat": 19.9975,
+    "lon": 73.7898,
     "status": "Active"
   },
   {
     "id": "CL008",
     "clinic": "Clinic 8",
-    "doctor": "",
-    "city": "Kochi",
-    "state": "Kerala",
-    "lat": 9.933957,
-    "lon": 76.021409,
+    "city": "Nagpur",
+    "lat": 21.1458,
+    "lon": 79.0882,
     "status": "Active"
   },
   {
     "id": "CL009",
     "clinic": "Clinic 9",
-    "doctor": "",
-    "city": "Bhopal",
-    "state": "Madhya Pradesh",
-    "lat": 23.599994,
-    "lon": 77.697887,
+    "city": "Indore",
+    "lat": 22.7196,
+    "lon": 75.8577,
     "status": "Active"
   },
   {
     "id": "CL010",
     "clinic": "Clinic 10",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.287469,
-    "lon": 72.595163,
+    "city": "Rajkot",
+    "lat": 22.3039,
+    "lon": 70.8022,
     "status": "Active"
   },
   {
     "id": "CL011",
     "clinic": "Clinic 11",
-    "doctor": "",
-    "city": "Pune",
-    "state": "Maharashtra",
-    "lat": 18.54728,
-    "lon": 73.543999,
+    "city": "Hyderabad",
+    "lat": 17.739268,
+    "lon": 78.530559,
     "status": "Inactive"
   },
   {
     "id": "CL012",
     "clinic": "Clinic 12",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 12.946989,
-    "lon": 80.260364,
+    "city": "Lucknow",
+    "lat": 26.997586,
+    "lon": 81.07519,
     "status": "Inactive"
   },
   {
     "id": "CL013",
     "clinic": "Clinic 13",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 13.122498,
-    "lon": 80.382677,
+    "city": "Patna",
+    "lat": 25.754547,
+    "lon": 85.037749,
     "status": "Inactive"
   },
   {
     "id": "CL014",
     "clinic": "Clinic 14",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.606425,
-    "lon": 77.252012,
+    "city": "Chennai",
+    "lat": 13.149694,
+    "lon": 80.539685,
     "status": "Inactive"
   },
   {
     "id": "CL015",
     "clinic": "Clinic 15",
-    "doctor": "",
-    "city": "Ahmedabad",
-    "state": "Gujarat",
-    "lat": 22.831285,
-    "lon": 72.877436,
+    "city": "Jaipur",
+    "lat": 27.047683,
+    "lon": 75.439845,
     "status": "Inactive"
   },
   {
     "id": "CL016",
     "clinic": "Clinic 16",
-    "doctor": "",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "lat": 27.074008,
-    "lon": 80.628257,
+    "city": "Bhopal",
+    "lat": 23.507929,
+    "lon": 77.384307,
     "status": "Inactive"
   },
   {
     "id": "CL017",
     "clinic": "Clinic 17",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.652081,
-    "lon": 77.169749,
+    "city": "Jaipur",
+    "lat": 26.996733,
+    "lon": 75.643783,
     "status": "Inactive"
   },
   {
     "id": "CL018",
     "clinic": "Clinic 18",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.102577,
-    "lon": 72.742037,
+    "city": "Lucknow",
+    "lat": 26.477535,
+    "lon": 81.309415,
     "status": "Inactive"
   },
   {
     "id": "CL019",
     "clinic": "Clinic 19",
-    "doctor": "",
-    "city": "Kochi",
-    "state": "Kerala",
-    "lat": 10.085976,
-    "lon": 76.319221,
+    "city": "Delhi",
+    "lat": 29.011296,
+    "lon": 76.781176,
     "status": "Inactive"
   },
   {
     "id": "CL020",
     "clinic": "Clinic 20",
-    "doctor": "",
     "city": "Coimbatore",
-    "state": "Tamil Nadu",
-    "lat": 11.20227,
-    "lon": 77.295258,
+    "lat": 11.142949,
+    "lon": 77.307899,
     "status": "Inactive"
   },
   {
     "id": "CL021",
     "clinic": "Clinic 21",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 15.047732,
-    "lon": 74.421139,
+    "city": "Hyderabad",
+    "lat": 17.134212,
+    "lon": 78.441091,
     "status": "Inactive"
   },
   {
     "id": "CL022",
     "clinic": "Clinic 22",
-    "doctor": "",
     "city": "Bengaluru",
-    "state": "Karnataka",
-    "lat": 12.89319,
-    "lon": 77.445756,
+    "lat": 13.026854,
+    "lon": 77.545568,
     "status": "Inactive"
   },
   {
     "id": "CL023",
     "clinic": "Clinic 23",
-    "doctor": "",
-    "city": "Pune",
-    "state": "Maharashtra",
-    "lat": 18.513959,
-    "lon": 73.593388,
+    "city": "Kolkata",
+    "lat": 22.910777,
+    "lon": 88.571277,
     "status": "Inactive"
   },
   {
     "id": "CL024",
     "clinic": "Clinic 24",
-    "doctor": "",
-    "city": "Bengaluru",
-    "state": "Karnataka",
-    "lat": 12.90913,
-    "lon": 77.434163,
+    "city": "Kolkata",
+    "lat": 22.205189,
+    "lon": 88.037251,
     "status": "Inactive"
   },
   {
     "id": "CL025",
     "clinic": "Clinic 25",
-    "doctor": "",
-    "city": "Indore",
-    "state": "Madhya Pradesh",
-    "lat": 22.570585,
-    "lon": 75.952129,
+    "city": "Chennai",
+    "lat": 13.337248,
+    "lon": 80.519445,
     "status": "Inactive"
   },
   {
     "id": "CL026",
     "clinic": "Clinic 26",
-    "doctor": "",
-    "city": "Indore",
-    "state": "Madhya Pradesh",
-    "lat": 22.603759,
-    "lon": 75.871602,
+    "city": "Bhopal",
+    "lat": 23.596486,
+    "lon": 77.291131,
     "status": "Inactive"
   },
   {
     "id": "CL027",
     "clinic": "Clinic 27",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 15.191574,
-    "lon": 74.05062,
+    "city": "Coimbatore",
+    "lat": 11.35287,
+    "lon": 77.106162,
     "status": "Inactive"
   },
   {
     "id": "CL028",
     "clinic": "Clinic 28",
-    "doctor": "",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "lat": 27.187041,
-    "lon": 80.833731,
+    "city": "Kolkata",
+    "lat": 22.281289,
+    "lon": 88.714525,
     "status": "Inactive"
   },
   {
     "id": "CL029",
     "clinic": "Clinic 29",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.62657,
-    "lon": 76.785005,
+    "city": "Coimbatore",
+    "lat": 10.660328,
+    "lon": 77.33212,
     "status": "Inactive"
   },
   {
     "id": "CL030",
     "clinic": "Clinic 30",
-    "doctor": "",
-    "city": "Bhopal",
-    "state": "Madhya Pradesh",
-    "lat": 23.456299,
-    "lon": 77.207386,
+    "city": "Bengaluru",
+    "lat": 13.361438,
+    "lon": 77.605918,
     "status": "Inactive"
   },
   {
     "id": "CL031",
     "clinic": "Clinic 31",
-    "doctor": "",
-    "city": "Patna",
-    "state": "Bihar",
-    "lat": 25.45342,
-    "lon": 85.071864,
+    "city": "Hyderabad",
+    "lat": 17.010725,
+    "lon": 78.284707,
     "status": "Inactive"
   },
   {
     "id": "CL032",
     "clinic": "Clinic 32",
-    "doctor": "",
-    "city": "Ahmedabad",
-    "state": "Gujarat",
-    "lat": 22.966915,
-    "lon": 72.722519,
+    "city": "Bengaluru",
+    "lat": 12.896167,
+    "lon": 77.510774,
     "status": "Inactive"
   },
   {
     "id": "CL033",
     "clinic": "Clinic 33",
-    "doctor": "",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "lat": 26.896996,
-    "lon": 81.113049,
+    "city": "Delhi",
+    "lat": 28.608077,
+    "lon": 76.787405,
     "status": "Inactive"
   },
   {
     "id": "CL034",
     "clinic": "Clinic 34",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 15.617924,
-    "lon": 74.39968,
+    "city": "Jaipur",
+    "lat": 26.589293,
+    "lon": 75.852361,
     "status": "Inactive"
   },
   {
     "id": "CL035",
     "clinic": "Clinic 35",
-    "doctor": "",
-    "city": "Kolkata",
-    "state": "West Bengal",
-    "lat": 22.329098,
-    "lon": 88.233404,
+    "city": "Bhopal",
+    "lat": 23.412845,
+    "lon": 77.437574,
     "status": "Inactive"
   },
   {
     "id": "CL036",
     "clinic": "Clinic 36",
-    "doctor": "",
-    "city": "Patna",
-    "state": "Bihar",
-    "lat": 25.596036,
-    "lon": 85.112938,
+    "city": "Bhopal",
+    "lat": 23.24685,
+    "lon": 77.273492,
     "status": "Inactive"
   },
   {
     "id": "CL037",
     "clinic": "Clinic 37",
-    "doctor": "",
-    "city": "Patna",
-    "state": "Bihar",
-    "lat": 25.883215,
-    "lon": 85.09568,
+    "city": "Kolkata",
+    "lat": 22.926939,
+    "lon": 88.003415,
     "status": "Inactive"
   },
   {
     "id": "CL038",
     "clinic": "Clinic 38",
-    "doctor": "",
-    "city": "Ahmedabad",
-    "state": "Gujarat",
-    "lat": 23.078911,
-    "lon": 72.578554,
+    "city": "Chennai",
+    "lat": 12.958416,
+    "lon": 79.941026,
     "status": "Inactive"
   },
   {
     "id": "CL039",
     "clinic": "Clinic 39",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 13.424152,
-    "lon": 80.316014,
+    "city": "Patna",
+    "lat": 25.699526,
+    "lon": 84.798598,
     "status": "Inactive"
   },
   {
     "id": "CL040",
     "clinic": "Clinic 40",
-    "doctor": "",
-    "city": "Indore",
-    "state": "Madhya Pradesh",
-    "lat": 22.78314,
-    "lon": 75.707227,
+    "city": "Bhopal",
+    "lat": 22.948659,
+    "lon": 77.760925,
     "status": "Inactive"
   },
   {
     "id": "CL041",
     "clinic": "Clinic 41",
-    "doctor": "",
-    "city": "Nagpur",
-    "state": "Maharashtra",
-    "lat": 21.090376,
-    "lon": 79.195886,
+    "city": "Hyderabad",
+    "lat": 17.649115,
+    "lon": 78.483711,
     "status": "Inactive"
   },
   {
     "id": "CL042",
     "clinic": "Clinic 42",
-    "doctor": "",
-    "city": "Jaipur",
-    "state": "Rajasthan",
-    "lat": 26.777962,
-    "lon": 75.642437,
+    "city": "Kochi",
+    "lat": 9.76385,
+    "lon": 75.978973,
     "status": "Inactive"
   },
   {
     "id": "CL043",
     "clinic": "Clinic 43",
-    "doctor": "",
-    "city": "Kochi",
-    "state": "Kerala",
-    "lat": 10.112579,
-    "lon": 76.537491,
+    "city": "Jaipur",
+    "lat": 26.669207,
+    "lon": 75.780262,
     "status": "Inactive"
   },
   {
     "id": "CL044",
     "clinic": "Clinic 44",
-    "doctor": "",
-    "city": "Vadodara",
-    "state": "Gujarat",
-    "lat": 22.504452,
-    "lon": 72.864378,
+    "city": "Hyderabad",
+    "lat": 17.736197,
+    "lon": 78.560025,
     "status": "Inactive"
   },
   {
     "id": "CL045",
     "clinic": "Clinic 45",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.032895,
-    "lon": 72.679034,
+    "city": "Lucknow",
+    "lat": 26.584425,
+    "lon": 80.556264,
     "status": "Inactive"
   },
   {
     "id": "CL046",
     "clinic": "Clinic 46",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 15.603672,
-    "lon": 74.389589,
+    "city": "Jaipur",
+    "lat": 27.229774,
+    "lon": 76.019721,
     "status": "Inactive"
   },
   {
     "id": "CL047",
     "clinic": "Clinic 47",
-    "doctor": "",
-    "city": "Indore",
-    "state": "Madhya Pradesh",
-    "lat": 22.489247,
-    "lon": 75.896578,
+    "city": "Coimbatore",
+    "lat": 11.142472,
+    "lon": 77.084153,
     "status": "Inactive"
   },
   {
     "id": "CL048",
     "clinic": "Clinic 48",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 13.229417,
-    "lon": 80.020373,
+    "city": "Hyderabad",
+    "lat": 17.700146,
+    "lon": 78.175225,
     "status": "Inactive"
   },
   {
     "id": "CL049",
     "clinic": "Clinic 49",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.203772,
-    "lon": 72.996953,
+    "city": "Lucknow",
+    "lat": 26.724137,
+    "lon": 81.300394,
     "status": "Inactive"
   },
   {
     "id": "CL050",
     "clinic": "Clinic 50",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 12.895632,
-    "lon": 80.449792,
+    "city": "Bengaluru",
+    "lat": 13.042567,
+    "lon": 77.816424,
     "status": "Inactive"
   },
   {
     "id": "CL051",
     "clinic": "Clinic 51",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 14.988128,
-    "lon": 73.995464,
+    "city": "Patna",
+    "lat": 25.398499,
+    "lon": 84.842491,
     "status": "Inactive"
   },
   {
     "id": "CL052",
     "clinic": "Clinic 52",
-    "doctor": "",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "lat": 26.748746,
-    "lon": 81.122563,
+    "city": "Bengaluru",
+    "lat": 13.285488,
+    "lon": 77.473957,
     "status": "Inactive"
   },
   {
     "id": "CL053",
     "clinic": "Clinic 53",
-    "doctor": "",
-    "city": "Bengaluru",
-    "state": "Karnataka",
-    "lat": 13.105503,
-    "lon": 77.531804,
+    "city": "Bhopal",
+    "lat": 23.024373,
+    "lon": 77.562554,
     "status": "Inactive"
   },
   {
     "id": "CL054",
     "clinic": "Clinic 54",
-    "doctor": "",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "lat": 26.937313,
-    "lon": 80.949342,
+    "city": "Hyderabad",
+    "lat": 17.28484,
+    "lon": 78.336758,
     "status": "Inactive"
   },
   {
     "id": "CL055",
     "clinic": "Clinic 55",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 29.015935,
-    "lon": 76.776104,
+    "city": "Vishakhapatnam",
+    "lat": 17.596304,
+    "lon": 83.379584,
     "status": "Inactive"
   },
   {
     "id": "CL056",
     "clinic": "Clinic 56",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.408472,
-    "lon": 73.139798,
+    "city": "Patna",
+    "lat": 25.359081,
+    "lon": 85.027814,
     "status": "Inactive"
   },
   {
     "id": "CL057",
     "clinic": "Clinic 57",
-    "doctor": "",
-    "city": "Chennai",
-    "state": "Tamil Nadu",
-    "lat": 12.867609,
-    "lon": 80.547105,
+    "city": "Bengaluru",
+    "lat": 12.615539,
+    "lon": 77.608899,
     "status": "Inactive"
   },
   {
     "id": "CL058",
     "clinic": "Clinic 58",
-    "doctor": "",
-    "city": "Nagpur",
-    "state": "Maharashtra",
-    "lat": 21.031629,
-    "lon": 78.902494,
+    "city": "Delhi",
+    "lat": 28.574213,
+    "lon": 76.796257,
     "status": "Inactive"
   },
   {
     "id": "CL059",
     "clinic": "Clinic 59",
-    "doctor": "",
-    "city": "Nagpur",
-    "state": "Maharashtra",
-    "lat": 21.013305,
-    "lon": 78.973449,
+    "city": "Jaipur",
+    "lat": 26.849592,
+    "lon": 75.861573,
     "status": "Inactive"
   },
   {
     "id": "CL060",
     "clinic": "Clinic 60",
-    "doctor": "",
-    "city": "Vishakhapatnam",
-    "state": "Andhra Pradesh",
-    "lat": 17.49915,
-    "lon": 83.006099,
+    "city": "Kochi",
+    "lat": 9.823858,
+    "lon": 76.177209,
     "status": "Inactive"
   },
   {
     "id": "CL061",
     "clinic": "Clinic 61",
-    "doctor": "",
-    "city": "Kolkata",
-    "state": "West Bengal",
-    "lat": 22.567761,
-    "lon": 88.427377,
+    "city": "Kochi",
+    "lat": 10.052553,
+    "lon": 76.479696,
     "status": "Inactive"
   },
   {
     "id": "CL062",
     "clinic": "Clinic 62",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 18.877479,
-    "lon": 73.010684,
+    "city": "Kolkata",
+    "lat": 22.699159,
+    "lon": 88.686633,
     "status": "Inactive"
   },
   {
     "id": "CL063",
     "clinic": "Clinic 63",
-    "doctor": "",
-    "city": "Ahmedabad",
-    "state": "Gujarat",
-    "lat": 23.302713,
-    "lon": 72.424665,
+    "city": "Bengaluru",
+    "lat": 12.800406,
+    "lon": 77.48098,
     "status": "Inactive"
   },
   {
     "id": "CL064",
     "clinic": "Clinic 64",
-    "doctor": "",
-    "city": "Surat",
-    "state": "Gujarat",
-    "lat": 21.009647,
-    "lon": 72.523012,
+    "city": "Coimbatore",
+    "lat": 10.804497,
+    "lon": 77.105264,
     "status": "Inactive"
   },
   {
     "id": "CL065",
     "clinic": "Clinic 65",
-    "doctor": "",
-    "city": "Vishakhapatnam",
-    "state": "Andhra Pradesh",
-    "lat": 17.532015,
-    "lon": 83.163926,
+    "city": "Lucknow",
+    "lat": 26.644329,
+    "lon": 80.623456,
     "status": "Inactive"
   },
   {
     "id": "CL066",
     "clinic": "Clinic 66",
-    "doctor": "",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "lat": 19.412559,
-    "lon": 73.209723,
+    "city": "Bengaluru",
+    "lat": 13.072535,
+    "lon": 77.883336,
     "status": "Inactive"
   },
   {
     "id": "CL067",
     "clinic": "Clinic 67",
-    "doctor": "",
     "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.424575,
-    "lon": 77.224278,
+    "lat": 28.740798,
+    "lon": 76.869475,
     "status": "Inactive"
   },
   {
     "id": "CL068",
     "clinic": "Clinic 68",
-    "doctor": "",
-    "city": "Goa",
-    "state": "Goa",
-    "lat": 15.531293,
-    "lon": 73.778073,
+    "city": "Bhopal",
+    "lat": 23.580338,
+    "lon": 77.639179,
     "status": "Inactive"
   },
   {
     "id": "CL069",
     "clinic": "Clinic 69",
-    "doctor": "",
-    "city": "Vadodara",
-    "state": "Gujarat",
-    "lat": 22.21781,
-    "lon": 73.32623,
+    "city": "Vishakhapatnam",
+    "lat": 17.889128,
+    "lon": 83.597279,
     "status": "Inactive"
   },
   {
     "id": "CL070",
     "clinic": "Clinic 70",
-    "doctor": "",
-    "city": "Pune",
-    "state": "Maharashtra",
-    "lat": 18.510682,
-    "lon": 73.746383,
+    "city": "Bengaluru",
+    "lat": 13.361221,
+    "lon": 77.466826,
     "status": "Inactive"
   },
   {
     "id": "CL071",
     "clinic": "Clinic 71",
-    "doctor": "",
-    "city": "Surat",
-    "state": "Gujarat",
-    "lat": 21.445278,
-    "lon": 72.687704,
+    "city": "Chennai",
+    "lat": 12.7601,
+    "lon": 80.171351,
     "status": "Inactive"
   },
   {
     "id": "CL072",
     "clinic": "Clinic 72",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.913666,
-    "lon": 77.359131,
+    "city": "Chennai",
+    "lat": 13.139321,
+    "lon": 80.38364,
     "status": "Inactive"
   },
   {
     "id": "CL073",
     "clinic": "Clinic 73",
-    "doctor": "",
-    "city": "Nagpur",
-    "state": "Maharashtra",
-    "lat": 21.419854,
-    "lon": 78.943967,
+    "city": "Coimbatore",
+    "lat": 10.796058,
+    "lon": 77.096269,
     "status": "Inactive"
   },
   {
     "id": "CL074",
     "clinic": "Clinic 74",
-    "doctor": "",
-    "city": "Delhi",
-    "state": "Delhi",
-    "lat": 28.606692,
-    "lon": 77.330124,
+    "city": "Lucknow",
+    "lat": 27.245005,
+    "lon": 80.83353,
     "status": "Inactive"
   },
   {
     "id": "CL075",
     "clinic": "Clinic 75",
-    "doctor": "",
-    "city": "Vadodara",
-    "state": "Gujarat",
-    "lat": 22.585313,
-    "lon": 73.021069,
+    "city": "Patna",
+    "lat": 25.329756,
+    "lon": 84.942887,
     "status": "Inactive"
   }
 ];
-const STREAM_URL = "https://api.allorigins.win/raw?url=https://cast4.my-control-panel.com/proxy/demo4usv/live";
+const SITE = "https://www.radio4publichealth.org";
 
-// init map
-const map = L.map('map', { tap: true, touchZoom: true, scrollWheelZoom: true }).setView([22.0, 79.0], 5);
+const map = L.map('map').setView([21.5, 78.5], 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
-// neutral basemap (Carto Positron - clean, neutral)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors & CartoDB' }).addTo(map);
+function greenIcon() { return L.divIcon({ className:'', html:'<div class="pulse-green"></div>', iconSize:[24,24], iconAnchor:[12,12] }); }
+function redIcon() { return L.divIcon({ className:'', html:'<div class="pulse-red"></div>', iconSize:[16,16], iconAnchor:[8,8] }); }
 
-// audio setup
-const audio = new Audio();
-audio.crossOrigin = "anonymous";
-audio.preload = "none";
-audio.loop = true;
-audio.volume = 1.0;
-let audioEnabled = false;
-function enableAudioOnce(){ if(audioEnabled) return; audioEnabled = true; try{ audio.play().then(()=>{ audio.pause(); audio.currentTime = 0; }).catch(()=>{}); }catch(e){} document.removeEventListener('click', enableAudioOnce); document.removeEventListener('touchstart', enableAudioOnce); }
-document.addEventListener('click', enableAudioOnce);
-document.addEventListener('touchstart', enableAudioOnce);
-
-// icons
-function greenIcon(){ return L.divIcon({ className:'', html:'<div class="pulse-green"></div>', iconSize:[40,40], iconAnchor:[20,20] }); }
-function redIcon(){ return L.divIcon({ className:'', html:'<div class="pulse-red"></div>', iconSize:[34,34], iconAnchor:[17,17] }); }
-
-// add markers
-const markers = [];
 clinics.forEach(cl => {
   const icon = cl.status === 'Active' ? greenIcon() : redIcon();
-  const marker = L.marker([cl.lat, cl.lon], { icon, riseOnHover:true }).addTo(map);
-  const popupHtml = `<div style="font-size:14px;line-height:1.3;"><strong>ID: ${'${'}cl.id${'}'}</strong><br/>${'${'}cl.clinic${'}'}<br/>${'${'}cl.city${'}'} - ${'${'}cl.state${'}'}<br/><em>Status: ${'${'}cl.status${'}'}</em></div>`;
-  marker.bindPopup(popupHtml, { maxWidth:260 });
-  marker.clinic = cl;
-  // touch/click handlers (mobile-friendly)
-  marker.on('click', function(e){
-    if(cl.status === 'Active'){
-      if(audioEnabled){ audio.src = STREAM_URL; audio.play().catch(()=>{}); } else { const info = document.querySelector('.info-note'); info.innerHTML = 'Tap once on page to enable audio then tap a green dot.'; setTimeout(()=> info.innerHTML = 'Tap once on page (mobile) or click anywhere (desktop) to enable audio. Active clinics stream Cleveland Radio.',3000); }
-    } else { // open popup for inactive
-      this.openPopup();
-    }
-  });
-  // larger hit area for touch: also play on mouseover for desktop
-  marker.on('mouseover', function(){ if(cl.status === 'Active' && audioEnabled){ audio.src = STREAM_URL; audio.play().catch(()=>{}); } });
-  marker.on('mouseout', function(){ if(cl.status === 'Active'){ try{ audio.pause(); audio.currentTime = 0; }catch(e){} } });
-  markers.push(marker);
-});
-
-// controls
-document.getElementById('zoomAll').addEventListener('click', function(){
-  const group = L.featureGroup(markers);
-  map.fitBounds(group.getBounds().pad(0.15));
-});
-
-let showingActiveOnly = false;
-document.getElementById('activeOnly').addEventListener('click', function(){
-  showingActiveOnly = !showingActiveOnly;
-  this.textContent = showingActiveOnly ? 'Show All' : 'Show Active';
-  markers.forEach(m => { if(showingActiveOnly) { if(m.clinic.status !== 'Active') map.removeLayer(m); } else { map.addLayer(m); } });
-});
-
-// search
-const search = document.getElementById('search');
-search.addEventListener('input', function(){
-  const q = this.value.trim().toLowerCase();
-  if(!q) return;
-  const found = clinics.find(c => c.id.toLowerCase() === q || c.clinic.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
-  if(found){
-    map.setView([found.lat, found.lon], 13);
-    const mk = markers.find(m => m.clinic.id === found.id);
-    if(mk) mk.openPopup();
+  const marker = L.marker([cl.lat, cl.lon], { icon }).addTo(map);
+  const popup = `<div style="font-size:14px"><strong>${cl.id}</strong><br/>${cl.clinic}<br/>${cl.city}<br/>Status: ${cl.status}</div>`;
+  marker.bindPopup(popup);
+  if(cl.status === 'Active') {
+    marker.on('click', ()=> window.open(SITE, '_blank'));
   }
 });
-
-// deep link ?id=CL001
-(function(){
-  const url = new URL(window.location.href);
-  const id = url.searchParams.get('id');
-  if(id){
-    const found = clinics.find(c => c.id.toLowerCase() === id.toLowerCase());
-    if(found){
-      map.setView([found.lat, found.lon], 13);
-      const mk = markers.find(m => m.clinic.id === found.id);
-      if(mk) setTimeout(()=> mk.openPopup(), 600);
-    }
-  }
-})();
-
 </script>
 </body>
 </html>
