@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Clinic Radio Map — gps-enabled : geo-tagged</title>
+<title>Clinic Radio Kiosk — Geo-Tagged (Mumbai)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   html,body,#map { height:100%; margin:0; padding:0; font-family:system-ui,Arial,sans-serif; background:#f7fbff; }
@@ -20,21 +20,10 @@
   .green .ring.r2 { width:72px; height:72px; border:3px solid rgba(0,200,0,0.45); }
   .green .ring.r3 { width:104px; height:104px; border:3px solid rgba(0,180,0,0.32); }
 
-  .red .core { width:10px; height:10px; background:rgb(140,0,0); box-shadow:0 0 6px 2px rgba(220,60,60,0.45); }
-  .red .ring.r1 { width:36px; height:36px; border:2px solid rgba(255,80,80,0.28); }
-  .red .ring.r2 { width:64px; height:64px; border:2px solid rgba(255,80,80,0.2); }
-  .red .ring.r3 { width:92px; height:92px; border:2px solid rgba(255,80,80,0.14); }
-
   @keyframes flash-fast {
     0% { transform:translate(-50%,-50%) scale(1); opacity:1; }
     30% { transform:translate(-50%,-50%) scale(1.5); opacity:0.95; }
     60% { transform:translate(-50%,-50%) scale(1); opacity:0.6; }
-    100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
-  }
-
-  @keyframes flash-slow {
-    0% { transform:translate(-50%,-50%) scale(1); opacity:1; }
-    40% { transform:translate(-50%,-50%) scale(1.4); opacity:0.6; }
     100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
   }
 
@@ -44,644 +33,43 @@
     100% { transform:translate(-50%,-50%) scale(1.6); opacity:0; }
   }
 
-  .core.animate { animation: var(--flash-anim) var(--flash-dur) linear infinite; animation-delay: var(--flash-delay); }
-  .ring.r1.animate { animation: burst var(--burst-dur) ease-out infinite; animation-delay: var(--ring1-delay); }
-  .ring.r2.animate { animation: burst var(--burst-dur) ease-out infinite; animation-delay: var(--ring2-delay); }
-  .ring.r3.animate { animation: burst var(--burst-dur) ease-out infinite; animation-delay: var(--ring3-delay); }
+  .core.animate { animation: flash-fast 1s linear infinite; }
+  .ring.r1.animate { animation: burst 1.6s ease-out infinite; }
+  .ring.r2.animate { animation: burst 1.6s ease-out infinite 0.3s; }
+  .ring.r3.animate { animation: burst 1.6s ease-out infinite 0.6s; }
 
   .leaflet-marker-icon { background:transparent; border:none; width:40px; height:40px; }
 </style>
 </head>
 <body>
-<div class="top-bar"><div class="title">Clinic Radio Kiosk Map — gps-enabled : geo-tagged </div> 
-"></div> * Radio 4 Public Health - 75 Clinics : Green - Active / Red - Non Active * </div></div>
+<div class="top-bar">
+  <div class="title">Clinic Radio Kiosk — Dr Shashank Joshi, Geo-Tagged (Mumbai)</div>
+  <div style="font-size:13px;color:#28507a;">Radio 4 Public Health — 1 Clinic • Green = Active</div>
+</div>
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const clinics = [
-  {
-    "id": "CL001",
-    "clinic": "Clinic 1",
-    "city": "Mumbai",
-    "lat": 19.076,
-    "lon": 72.8777,
-    "status": "Active"
-  },
-  {
-    "id": "CL002",
-    "clinic": "Clinic 2",
-    "city": "Pune",
-    "lat": 18.5204,
-    "lon": 73.8567,
-    "status": "Active"
-  },
-  {
-    "id": "CL003",
-    "clinic": "Clinic 3",
-    "city": "Ahmedabad",
-    "lat": 23.0225,
-    "lon": 72.5714,
-    "status": "Active"
-  },
-  {
-    "id": "CL004",
-    "clinic": "Clinic 4",
-    "city": "Surat",
-    "lat": 21.1702,
-    "lon": 72.8311,
-    "status": "Active"
-  },
-  {
-    "id": "CL005",
-    "clinic": "Clinic 5",
-    "city": "Vadodara",
-    "lat": 22.3072,
-    "lon": 73.1812,
-    "status": "Active"
-  },
-  {
-    "id": "CL006",
-    "clinic": "Clinic 6",
-    "city": "Goa",
-    "lat": 15.2993,
-    "lon": 74.124,
-    "status": "Active"
-  },
-  {
-    "id": "CL007",
-    "clinic": "Clinic 7",
-    "city": "Nashik",
-    "lat": 19.9975,
-    "lon": 73.7898,
-    "status": "Active"
-  },
-  {
-    "id": "CL008",
-    "clinic": "Clinic 8",
-    "city": "Nagpur",
-    "lat": 21.1458,
-    "lon": 79.0882,
-    "status": "Active"
-  },
-  {
-    "id": "CL009",
-    "clinic": "Clinic 9",
-    "city": "Indore",
-    "lat": 22.7196,
-    "lon": 75.8577,
-    "status": "Active"
-  },
-  {
-    "id": "CL010",
-    "clinic": "Clinic 10",
-    "city": "Rajkot",
-    "lat": 22.3039,
-    "lon": 70.8022,
-    "status": "Active"
-  },
-  {
-    "id": "CL011",
-    "clinic": "Clinic 11",
-    "city": "Hyderabad",
-    "lat": 17.576341,
-    "lon": 78.278101,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL012",
-    "clinic": "Clinic 12",
-    "city": "Lucknow",
-    "lat": 27.146444,
-    "lon": 81.107978,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL013",
-    "clinic": "Clinic 13",
-    "city": "Kolkata",
-    "lat": 22.279644,
-    "lon": 88.110085,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL014",
-    "clinic": "Clinic 14",
-    "city": "Hyderabad",
-    "lat": 17.277452,
-    "lon": 78.363682,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL015",
-    "clinic": "Clinic 15",
-    "city": "Chennai",
-    "lat": 12.878564,
-    "lon": 79.970248,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL016",
-    "clinic": "Clinic 16",
-    "city": "Bhopal",
-    "lat": 23.420069,
-    "lon": 77.178361,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL017",
-    "clinic": "Clinic 17",
-    "city": "Bhopal",
-    "lat": 23.365802,
-    "lon": 77.344018,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL018",
-    "clinic": "Clinic 18",
-    "city": "Bhopal",
-    "lat": 23.108649,
-    "lon": 77.54188,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL019",
-    "clinic": "Clinic 19",
-    "city": "Lucknow",
-    "lat": 27.043804,
-    "lon": 80.702387,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL020",
-    "clinic": "Clinic 20",
-    "city": "Chennai",
-    "lat": 13.08428,
-    "lon": 80.358904,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL021",
-    "clinic": "Clinic 21",
-    "city": "Jaipur",
-    "lat": 26.715654,
-    "lon": 75.795173,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL022",
-    "clinic": "Clinic 22",
-    "city": "Lucknow",
-    "lat": 27.067324,
-    "lon": 80.608756,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL023",
-    "clinic": "Clinic 23",
-    "city": "Delhi",
-    "lat": 28.628011,
-    "lon": 77.143533,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL024",
-    "clinic": "Clinic 24",
-    "city": "Vishakhapatnam",
-    "lat": 17.661913,
-    "lon": 82.925267,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL025",
-    "clinic": "Clinic 25",
-    "city": "Lucknow",
-    "lat": 27.160596,
-    "lon": 81.174042,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL026",
-    "clinic": "Clinic 26",
-    "city": "Kochi",
-    "lat": 9.963748,
-    "lon": 76.065696,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL027",
-    "clinic": "Clinic 27",
-    "city": "Bhopal",
-    "lat": 23.102385,
-    "lon": 77.165915,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL028",
-    "clinic": "Clinic 28",
-    "city": "Delhi",
-    "lat": 28.721638,
-    "lon": 77.328389,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL029",
-    "clinic": "Clinic 29",
-    "city": "Kochi",
-    "lat": 10.252666,
-    "lon": 76.041746,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL030",
-    "clinic": "Clinic 30",
-    "city": "Delhi",
-    "lat": 29.034655,
-    "lon": 77.040801,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL031",
-    "clinic": "Clinic 31",
-    "city": "Vishakhapatnam",
-    "lat": 17.455589,
-    "lon": 83.229572,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL032",
-    "clinic": "Clinic 32",
-    "city": "Hyderabad",
-    "lat": 17.711405,
-    "lon": 78.756737,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL033",
-    "clinic": "Clinic 33",
-    "city": "Patna",
-    "lat": 25.674922,
-    "lon": 84.964046,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL034",
-    "clinic": "Clinic 34",
-    "city": "Vishakhapatnam",
-    "lat": 17.398687,
-    "lon": 82.913374,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL035",
-    "clinic": "Clinic 35",
-    "city": "Coimbatore",
-    "lat": 10.811809,
-    "lon": 76.905255,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL036",
-    "clinic": "Clinic 36",
-    "city": "Lucknow",
-    "lat": 27.073917,
-    "lon": 81.137227,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL037",
-    "clinic": "Clinic 37",
-    "city": "Lucknow",
-    "lat": 27.101003,
-    "lon": 81.119175,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL038",
-    "clinic": "Clinic 38",
-    "city": "Delhi",
-    "lat": 29.04464,
-    "lon": 77.124213,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL039",
-    "clinic": "Clinic 39",
-    "city": "Bengaluru",
-    "lat": 13.241615,
-    "lon": 77.255743,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL040",
-    "clinic": "Clinic 40",
-    "city": "Coimbatore",
-    "lat": 11.219718,
-    "lon": 76.670244,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL041",
-    "clinic": "Clinic 41",
-    "city": "Chennai",
-    "lat": 13.100511,
-    "lon": 80.410385,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL042",
-    "clinic": "Clinic 42",
-    "city": "Jaipur",
-    "lat": 27.055311,
-    "lon": 76.085331,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL043",
-    "clinic": "Clinic 43",
-    "city": "Chennai",
-    "lat": 12.769637,
-    "lon": 80.062966,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL044",
-    "clinic": "Clinic 44",
-    "city": "Coimbatore",
-    "lat": 11.361697,
-    "lon": 76.898524,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL045",
-    "clinic": "Clinic 45",
-    "city": "Bengaluru",
-    "lat": 12.941881,
-    "lon": 77.797052,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL046",
-    "clinic": "Clinic 46",
-    "city": "Jaipur",
-    "lat": 26.714459,
-    "lon": 75.818089,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL047",
-    "clinic": "Clinic 47",
-    "city": "Kolkata",
-    "lat": 22.225763,
-    "lon": 88.257358,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL048",
-    "clinic": "Clinic 48",
-    "city": "Bengaluru",
-    "lat": 13.19462,
-    "lon": 77.395309,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL049",
-    "clinic": "Clinic 49",
-    "city": "Coimbatore",
-    "lat": 10.785517,
-    "lon": 76.66089,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL050",
-    "clinic": "Clinic 50",
-    "city": "Vishakhapatnam",
-    "lat": 17.580571,
-    "lon": 82.942423,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL051",
-    "clinic": "Clinic 51",
-    "city": "Kochi",
-    "lat": 9.815042,
-    "lon": 76.269228,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL052",
-    "clinic": "Clinic 52",
-    "city": "Patna",
-    "lat": 25.697575,
-    "lon": 85.435587,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL053",
-    "clinic": "Clinic 53",
-    "city": "Bengaluru",
-    "lat": 13.086919,
-    "lon": 77.795367,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL054",
-    "clinic": "Clinic 54",
-    "city": "Bhopal",
-    "lat": 23.066915,
-    "lon": 77.639117,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL055",
-    "clinic": "Clinic 55",
-    "city": "Bhopal",
-    "lat": 23.175372,
-    "lon": 77.739865,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL056",
-    "clinic": "Clinic 56",
-    "city": "Delhi",
-    "lat": 28.485098,
-    "lon": 77.107459,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL057",
-    "clinic": "Clinic 57",
-    "city": "Vishakhapatnam",
-    "lat": 17.690524,
-    "lon": 82.882657,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL058",
-    "clinic": "Clinic 58",
-    "city": "Bhopal",
-    "lat": 23.554653,
-    "lon": 77.079662,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL059",
-    "clinic": "Clinic 59",
-    "city": "Delhi",
-    "lat": 28.526232,
-    "lon": 77.098596,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL060",
-    "clinic": "Clinic 60",
-    "city": "Chennai",
-    "lat": 13.110542,
-    "lon": 80.496484,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL061",
-    "clinic": "Clinic 61",
-    "city": "Patna",
-    "lat": 25.356193,
-    "lon": 85.364308,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL062",
-    "clinic": "Clinic 62",
-    "city": "Chennai",
-    "lat": 12.985901,
-    "lon": 80.054428,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL063",
-    "clinic": "Clinic 63",
-    "city": "Kolkata",
-    "lat": 22.465018,
-    "lon": 88.100695,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL064",
-    "clinic": "Clinic 64",
-    "city": "Kolkata",
-    "lat": 22.414031,
-    "lon": 88.563985,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL065",
-    "clinic": "Clinic 65",
-    "city": "Kolkata",
-    "lat": 22.65422,
-    "lon": 88.38811,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL066",
-    "clinic": "Clinic 66",
-    "city": "Coimbatore",
-    "lat": 11.186835,
-    "lon": 76.913944,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL067",
-    "clinic": "Clinic 67",
-    "city": "Lucknow",
-    "lat": 27.163103,
-    "lon": 80.911677,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL068",
-    "clinic": "Clinic 68",
-    "city": "Hyderabad",
-    "lat": 17.649713,
-    "lon": 78.305163,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL069",
-    "clinic": "Clinic 69",
-    "city": "Vishakhapatnam",
-    "lat": 17.431838,
-    "lon": 83.272912,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL070",
-    "clinic": "Clinic 70",
-    "city": "Coimbatore",
-    "lat": 11.363441,
-    "lon": 76.871551,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL071",
-    "clinic": "Clinic 71",
-    "city": "Vishakhapatnam",
-    "lat": 17.754259,
-    "lon": 83.427195,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL072",
-    "clinic": "Clinic 72",
-    "city": "Coimbatore",
-    "lat": 11.028888,
-    "lon": 76.960181,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL073",
-    "clinic": "Clinic 73",
-    "city": "Delhi",
-    "lat": 28.489648,
-    "lon": 77.014203,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL074",
-    "clinic": "Clinic 74",
-    "city": "Hyderabad",
-    "lat": 17.4299,
-    "lon": 78.672897,
-    "status": "Inactive"
-  },
-  {
-    "id": "CL075",
-    "clinic": "Clinic 75",
-    "city": "Kochi",
-    "lat": 10.119138,
-    "lon": 76.08921,
-    "status": "Inactive"
-  }
-];
-const SITE = "https://www.radio4publichealth.org";
+const clinic = {
+  id: "CL076",
+  clinic: "clinic radio kiosk - dr shashank joshi",
+  city: "Mumbai",
+  lat: 19.059882, 
+  lon: 72.835197,
+  status: "Active",
+  device: "RADIO 4"
+};
 
-function rand(min,max){ return Math.random()*(max-min)+min; }
+const SITE = "https://drshashankjoshi.radio4.in";
 
-const map = L.map('map').setView([21.5,78.5],5);
+const map = L.map('map').setView([clinic.lat, clinic.lon], 15);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 function makeMarkerElem(cl){
-  const status = cl.status === 'Active' ? 'green' : 'red';
-  const flashDur = cl.status==='Active' ? '1s' : '2.5s';
-  const flashAnim = cl.status==='Active' ? 'flash-fast' : 'flash-slow';
-  const burstDur = cl.status==='Active' ? '1.6s' : '2.8s';
-  const baseDelay = (Math.random()*0.9).toFixed(2) + 's';
-  const r1 = (parseFloat(baseDelay)).toFixed(2) + 's';
-  const r2 = (parseFloat(baseDelay)+0.35).toFixed(2) + 's';
-  const r3 = (parseFloat(baseDelay)+0.7).toFixed(2) + 's';
-
   const html = `
-    <div class="marker ${status}" style="--flash-dur:${flashDur}; --flash-anim:${flashAnim}; --flash-delay:${baseDelay}; --burst-dur:${burstDur}; --ring1-delay:${r1}; --ring2-delay:${r2}; --ring3-delay:${r3};">
+    <div class="marker green">
       <span class="ring r1 animate"></span>
       <span class="ring r2 animate"></span>
       <span class="ring r3 animate"></span>
@@ -693,14 +81,21 @@ function makeMarkerElem(cl){
   return div.firstElementChild;
 }
 
-clinics.forEach(cl => {
-  const elem = makeMarkerElem(cl);
-  const icon = L.divIcon({ className:'', html:elem.outerHTML, iconSize:[40,40], iconAnchor:[20,20] });
-  const marker = L.marker([cl.lat, cl.lon], { icon }).addTo(map);
-  const popup = `<div style="font-size:14px"><strong>${cl.id}</strong><br/>${cl.clinic}<br/>${cl.city}<br/>Status: ${cl.status}</div>`;
-  marker.bindPopup(popup);
-  if(cl.status==='Active') marker.on('click', ()=> window.open(SITE,'_blank'));
-});
+const elem = makeMarkerElem(clinic);
+const icon = L.divIcon({ className:'', html:elem.outerHTML, iconSize:[40,40], iconAnchor:[20,20] });
+const marker = L.marker([clinic.lat, clinic.lon], { icon }).addTo(map);
+
+const popup = `
+  <div style="font-size:14px;">
+    <strong>${clinic.device} — ${clinic.id}</strong><br/>
+    ${clinic.clinic}<br/>
+    ${clinic.city}<br/>
+    Status: ${clinic.status}
+  </div>
+`;
+marker.bindPopup(popup);
+marker.on('click', ()=> window.open(SITE,'_blank'));
+
 </script>
 </body>
 </html>
